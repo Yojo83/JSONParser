@@ -1,0 +1,25 @@
+Feaatures:
+- Objects: {}
+- Arrays: []
+- Items: String : Value
+- Values: String or Number or Objects or Arrays
+- String: ""
+
+Grammar:
+Object -> { ObjectList
+ObjectList -> , Item ObjectList | }
+Items -> String : Value
+Value -> Array | Number | Object | String | boolean | null
+Array -> [ ArrayList
+ArrayList -> , Value ArrayList | ]
+
+Result:
+- parseToJSON(object)
+- parseFromJSON(class, JSONString)
+
+TODO:
+enum support
+DEBUGGER for Exceptions
+good Exceptions
+
+end
