@@ -58,7 +58,10 @@ public class JSONArray implements JSONValue {
 		Object[] arr = (Object[]) out;
 		
 		for(int i = 0; i < values.size(); ++i) {
-			arr[i] = values.get(i).parseFromJSON(c.componentType());
+			if(values.get(i) == null)
+				arr[i] = null;
+			else
+				arr[i] = values.get(i).parseFromJSON(c.componentType());
 		}
 		
 		return out;

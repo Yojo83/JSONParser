@@ -64,7 +64,8 @@ public class JSONObject implements JSONValue {
 		
 		for(Field field : c.getFields()) {
 			try {
-				field.set(out, items.get(field.getName()).parseFromJSON(field.getType()));
+				if(items.get(field.getName()) != null)
+					field.set(out, items.get(field.getName()).parseFromJSON(field.getType()));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}

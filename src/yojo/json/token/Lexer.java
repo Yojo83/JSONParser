@@ -13,9 +13,6 @@ public class Lexer {
 		StringBuilder currentString = new StringBuilder();
 		
 		for(char c : json.toCharArray()) {
-			if(Character.isWhitespace(c))
-				continue;
-			
 			if(expectString) {
 				if(stringCommand) {
 					currentString.append('\\').append(c);
@@ -33,6 +30,9 @@ public class Lexer {
 				continue;
 			}
 
+			if(Character.isWhitespace(c))
+				continue;
+			
 			if(number(c)) {
 				expectNumber = true;
 				currentString.append(c);
