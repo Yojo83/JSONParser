@@ -1,14 +1,13 @@
 package yojo.json.token;
 
 import yojo.json.tree.JSONValue;
-import yojo.json.tree.TreeParserException;
 
 public class BooleanToken extends Token implements JSONValue{
 
 	public final boolean token;
 	
 	protected BooleanToken(boolean token) {
-		super(TokenType.BOOLEAN);
+		super(TokenType.BOOLEAN, Boolean.toString(token));
 		this.token = token;
 	}
 
@@ -29,9 +28,9 @@ public class BooleanToken extends Token implements JSONValue{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <A> A parseFromJSON(Class<A> c) throws TreeParserException {
+	public <A> A parseFromJSON(Class<A> c) throws TypeParsingException {
 		if(!(c.equals(Boolean.class) || c.equals(boolean.class)))
-			throw new TreeParserException();
+			throw new TypeParsingException(c.getName() + " is not a boolean class");
 		return (A) (Boolean) token;
 	}
 

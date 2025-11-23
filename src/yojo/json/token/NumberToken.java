@@ -1,14 +1,13 @@
 package yojo.json.token;
 
 import yojo.json.tree.JSONValue;
-import yojo.json.tree.TreeParserException;
 
 public class NumberToken extends Token implements JSONValue{
 
 	public final String number;
 	
 	protected NumberToken(String number) {
-		super(TokenType.NUMBER);
+		super(TokenType.NUMBER, number);
 		this.number = number;
 	}
 
@@ -29,7 +28,7 @@ public class NumberToken extends Token implements JSONValue{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <A> A parseFromJSON(Class<A> c) throws TreeParserException {
+	public <A> A parseFromJSON(Class<A> c) throws TypeParsingException {
 		if(c.equals(Byte.class) || c.equals(byte.class)) {
 			return (A) (Byte) Byte.parseByte(number);
 		}
@@ -42,7 +41,7 @@ public class NumberToken extends Token implements JSONValue{
 		if(c.equals(Long.class) || c.equals(long.class)) {
 			return (A) (Long) Long.parseLong(number);
 		}
-		throw new TreeParserException();
+		throw new TypeParsingException(c.getName() + " is not a number class");
 	}
 
 }

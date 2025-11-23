@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import yojo.json.JSONParser;
+import yojo.json.token.TypeParsingException;
 
 public class JSONObject implements JSONValue {
 	
@@ -52,7 +53,7 @@ public class JSONObject implements JSONValue {
 	}
 
 	@Override
-	public <A> A parseFromJSON(Class<A> c) throws TreeParserException {
+	public <A> A parseFromJSON(Class<A> c) throws TreeParserException, TypeParsingException {
 		A out;
 		try {
 			out = c.getDeclaredConstructor().newInstance();

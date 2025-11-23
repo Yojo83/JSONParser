@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import yojo.json.JSONParser;
+import yojo.json.token.TypeParsingException;
 
 public class JSONArray implements JSONValue {
 
@@ -43,9 +44,9 @@ public class JSONArray implements JSONValue {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public <A> A parseFromJSON(Class<A> c) throws TreeParserException {
+	public <A> A parseFromJSON(Class<A> c) throws TreeParserException, TypeParsingException {
 		if(!c.isArray())
-			throw new TreeParserException();
+			throw new TreeParserException(c.getName() + " is not an array class");
 			
 		A out;
 		try {

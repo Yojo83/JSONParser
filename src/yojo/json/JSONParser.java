@@ -3,6 +3,7 @@ package yojo.json;
 import java.lang.reflect.Field;
 
 import yojo.json.token.Lexer;
+import yojo.json.token.TypeParsingException;
 import yojo.json.tree.JSONObject;
 import yojo.json.tree.TreeParser;
 import yojo.json.tree.TreeParserException;
@@ -33,7 +34,7 @@ public class JSONParser {
 		return obj.parseToJSON();
 	}
 	
-	public static <A> A parseFromJSON(Class<A> c, String json) throws TreeParserException {
+	public static <A> A parseFromJSON(Class<A> c, String json) throws TreeParserException, TypeParsingException {
 		return parseFromJSON(json).parseFromJSON(c);
 	}
 	

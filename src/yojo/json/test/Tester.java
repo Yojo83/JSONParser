@@ -22,11 +22,15 @@ public class Tester {
 
 	public static void main(String[] args) {
 		try {
+			System.out.println(JSONParser.parseToJSON(JSONParser.parseFromJSON(json)));
+			
+			/*
 			ExampleObject test = new ExampleObject();
 			String testS = JSONParser.parseToJSON(test);
 			System.out.println(testS);
 			test = JSONParser.parseFromJSON(ExampleObject.class, testS);
 			System.out.println(JSONParser.parseToJSON(test));
+			*/
 		} catch (TreeParserException e) {
 			e.printStackTrace();
 		}

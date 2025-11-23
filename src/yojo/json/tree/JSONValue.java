@@ -1,5 +1,7 @@
 package yojo.json.tree;
 
+import yojo.json.token.TypeParsingException;
+
 public interface JSONValue {
 	
 	public static final JSONValue NULL = new JSONNullValue();
@@ -7,7 +9,7 @@ public interface JSONValue {
 	public JSONValueType getType();
 	public String parseToJSON();
 	public void parseToJSON(StringBuilder builder, int depth);
-	public <A> A parseFromJSON(Class<A> c) throws TreeParserException;
+	public <A> A parseFromJSON(Class<A> c) throws TreeParserException, TypeParsingException;
 	
 	public static enum JSONValueType{
 		ARRAY,

@@ -1,14 +1,13 @@
 package yojo.json.token;
 
 import yojo.json.tree.JSONValue;
-import yojo.json.tree.TreeParserException;
 
 public class StringToken extends Token implements JSONValue{
 
 	public final String string;
 	
 	protected StringToken(String string) {
-		super(TokenType.STRING);
+		super(TokenType.STRING, '"' + string + '"');
 		this.string = string;
 	}
 
@@ -29,11 +28,11 @@ public class StringToken extends Token implements JSONValue{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <A> A parseFromJSON(Class<A> c) throws TreeParserException {
+	public <A> A parseFromJSON(Class<A> c) throws TypeParsingException {
 		if(c.equals(String.class))
 			return (A) string;
 		if(c.equals(char.class) || c.equals(Character.class))
 			return (A) (Character) string.charAt(0);
-		throw new TreeParserException();
+		throw new TypeParsingException(c.getName() + " is not a string class");
 	}
 }
