@@ -108,6 +108,10 @@ public class JSONParser {
 			builder.append((boolean) obj);
 			return;
 		}
+		if(obj.getClass().isEnum()){
+			builder.append('"').append((obj).toString()).append('"');
+			return;
+		}
 		parseObjectToJSON(obj, builder, depth);
 	}
 	
