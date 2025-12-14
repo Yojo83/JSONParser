@@ -18,27 +18,45 @@ public class JSONArray implements JSONValue {
 	@Override
 	public String parseToJSON() {
 		StringBuilder builder = new StringBuilder();
-		parseToJSON(builder, 0);
+		parseToJSON(builder, new JSONParser());
+		return builder.toString();
+	}
+
+	public String parseToJSON(boolean setWhiteSpaces) {
+		StringBuilder builder = new StringBuilder();
+		parseToJSON(builder, new JSONParser(setWhiteSpaces));
+		return builder.toString();
+	}
+
+	public String parseToJSON(boolean setWhiteSpaces, boolean useTabs) {
+		StringBuilder builder = new StringBuilder();
+		parseToJSON(builder, new JSONParser(setWhiteSpaces, useTabs));
+		return builder.toString();
+	}
+
+	public String parseToJSON(boolean setWhiteSpaces, boolean useTabs, int indentation) {
+		StringBuilder builder = new StringBuilder();
+		parseToJSON(builder, new JSONParser(setWhiteSpaces, useTabs, indentation));
 		return builder.toString();
 	}
 
 	@Override
-	public void parseToJSON(StringBuilder builder, int depth) {
+	public void parseToJSON(StringBuilder builder, JSONParser whiteData) {
 		builder.append('[');
-		depth++;
-		JSONParser.newLine(builder, depth);
+		whiteData.depth++;
+		whiteData.newLine(builder);
 		
 		for(int i = 0; i < values.size(); ++i) {
-			values.get(i).parseToJSON(builder, depth);
+			values.get(i).parseToJSON(builder, whiteData);
 			
 			if(i+1 < values.size()) {
 				builder.append(", ");
-				JSONParser.newLine(builder, depth);
+				whiteData.newLine(builder);
 			}
 		}
 		
-		depth--;
-		JSONParser.newLine(builder, depth);
+		whiteData.depth--;
+		whiteData.newLine(builder);
 		builder.append(']');
 	}
 	

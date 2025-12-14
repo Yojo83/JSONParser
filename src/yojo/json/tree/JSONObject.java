@@ -19,36 +19,50 @@ public class JSONObject implements JSONValue {
 	@Override
 	public String parseToJSON() {
 		StringBuilder builder = new StringBuilder();
-		parseToJSON(builder, 0);
+		parseToJSON(builder, new JSONParser());
+		return builder.toString();
+	}
+
+	public String parseToJSON(boolean setWhiteSpaces) {
+		StringBuilder builder = new StringBuilder();
+		parseToJSON(builder, new JSONParser(setWhiteSpaces));
+		return builder.toString();
+	}
+
+	public String parseToJSON(boolean setWhiteSpaces, boolean useTabs) {
+		StringBuilder builder = new StringBuilder();
+		parseToJSON(builder, new JSONParser(setWhiteSpaces, useTabs));
+		return builder.toString();
+	}
+
+	public String parseToJSON(boolean setWhiteSpaces, boolean useTabs, int indentation) {
+		StringBuilder builder = new StringBuilder();
+		parseToJSON(builder, new JSONParser(setWhiteSpaces, useTabs, indentation));
 		return builder.toString();
 	}
 
 	@Override
-	public void parseToJSON(StringBuilder builder, int depth) {
+	public void parseToJSON(StringBuilder builder, JSONParser whiteData) {
 		builder.append('{');
-		depth++;
-		JSONParser.newLine(builder, depth);
-		
-		int depthArg = depth;
+		whiteData.depth++;
+		whiteData.newLine(builder);
 		
 		items.forEach((name, value) -> {
 			builder.append('"');
 			builder.append(name);
 			builder.append("\" : ");
 			
-			value.parseToJSON(builder, depthArg);
+			value.parseToJSON(builder, whiteData);
 			
 			builder.append(", ");
-			JSONParser.newLine(builder, depthArg);
+			whiteData.newLine(builder);
 		});
 		
-		int newLineCharacters = JSONParser.USE_TABS ? 
-				depth + 1 : 1 + JSONParser.INDENTATION * depth;
+		builder.replace(builder.length()-(2 + whiteData.getNewLineCharacters()), 
+				builder.length(), "");
 		
-		builder.replace(builder.length()-(2 + newLineCharacters), builder.length(), "");
-		
-		depth--;
-		JSONParser.newLine(builder, depth);
+		whiteData.depth--;
+		whiteData.newLine(builder);
 		builder.append('}');
 	}
 

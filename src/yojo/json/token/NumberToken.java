@@ -1,5 +1,6 @@
 package yojo.json.token;
 
+import yojo.json.JSONParser;
 import yojo.json.tree.JSONValue;
 
 public class NumberToken extends Token implements JSONValue{
@@ -22,7 +23,22 @@ public class NumberToken extends Token implements JSONValue{
 	}
 
 	@Override
-	public void parseToJSON(StringBuilder builder, int depth) {
+	public String parseToJSON(boolean setWhiteSpaces) {
+		return parseToJSON();
+	}
+
+	@Override
+	public String parseToJSON(boolean setWhiteSpaces, boolean useTabs) {
+		return parseToJSON();
+	}
+
+	@Override
+	public String parseToJSON(boolean setWhiteSpaces, boolean useTabs, int indentation) {
+		return parseToJSON();
+	}
+
+	@Override
+	public void parseToJSON(StringBuilder builder, JSONParser whiteData) {
 		builder.append(number);
 	}
 

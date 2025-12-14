@@ -9,29 +9,46 @@ import yojo.json.tree.TreeParser;
 import yojo.json.tree.TreeParserException;
 
 public class JSONParser {
-	
+
 	public static boolean SET_WHITE_SPACES = true;
 	public static boolean USE_TABS = false;
 	public static int INDENTATION = 4;
-	
+
+
 	public static String parseToJSON(Object obj) {
-		StringBuilder builder = new StringBuilder();
-		
-		if(obj == null || obj.getClass().isArray() 
-				|| obj instanceof String || obj instanceof Character)
-			return null;
-		
-		try {
-			parseObjectToJSON(obj, builder, 0);
-		} catch (IllegalArgumentException | IllegalAccessException | ClassCastException e) {
-			return null;
-		}
-		
-		return builder.toString();
+		return parseToJSON(obj, new JSONParser());
+	}
+
+	public static String parseToJSON(Object obj, boolean setWhiteSpaces) {
+		return parseToJSON(obj, new JSONParser(setWhiteSpaces));
+	}
+
+	public static String parseToJSON(Object obj, boolean setWhiteSpaces, 
+			boolean useTabs) {
+		return parseToJSON(obj, new JSONParser(setWhiteSpaces, useTabs));
+	}
+
+	public static String parseToJSON(Object obj, boolean setWhiteSpaces, 
+			boolean useTabs, int indentation) {
+		return parseToJSON(obj, new JSONParser(setWhiteSpaces, useTabs, indentation));
 	}
 	
 	public static String parseToJSON(JSONObject obj) {
 		return obj.parseToJSON();
+	}
+
+	public static String parseToJSON(JSONObject obj, boolean setWhiteSpaces) {
+		return obj.parseToJSON(setWhiteSpaces);
+	}
+
+	public static String parseToJSON(JSONObject obj, boolean setWhiteSpaces, 
+			boolean useTabs) {
+		return obj.parseToJSON(setWhiteSpaces, useTabs);
+	}
+
+	public static String parseToJSON(JSONObject obj, boolean setWhiteSpaces, 
+			boolean useTabs, int indentation) {
+		return obj.parseToJSON(setWhiteSpaces, useTabs, indentation);
 	}
 	
 	public static <A> A parseFromJSON(Class<A> c, String json) throws TreeParserException, TypeParsingException {
@@ -41,27 +58,81 @@ public class JSONParser {
 	public static JSONObject parseFromJSON(String json) throws TreeParserException {
 		return TreeParser.parse(Lexer.parseToTokenList(json));
 	}
+
 	
-	public static void newLine(StringBuilder builder, int depth) {
-		if(!SET_WHITE_SPACES)
+	
+	
+	
+	private final boolean setWhiteSpaces;
+	private final boolean useTabs;
+	private final int indentation;
+	public int depth = 0;
+
+	public JSONParser() {
+		this(SET_WHITE_SPACES);
+	}
+
+	public JSONParser(boolean setWhiteSpaces) {
+		this(setWhiteSpaces, USE_TABS);
+	}
+
+	public JSONParser(boolean setWhiteSpaces, boolean useTabs) {
+		this(setWhiteSpaces, useTabs, INDENTATION);
+	}
+
+	public JSONParser(boolean setWhiteSpaces, boolean useTabs, int indentation) {
+		this.indentation = indentation;
+		this.useTabs = useTabs;
+		this.setWhiteSpaces = setWhiteSpaces;
+	}
+
+	public void newLine(StringBuilder builder) {
+		if(!setWhiteSpaces)
 			return;
 		
 		builder.append('\n');
 		for(int i = 0; i < depth; ++i) {
-			if(USE_TABS) {
+			if(useTabs) {
 				builder.append('\t');
 			} else {
-				for(int j = 0; j < INDENTATION; ++j) {
+				for(int j = 0; j < indentation; ++j) {
 					builder.append(" ");
 				}
 			}
 		}
 	}
 	
-	private static void parseObjectToJSON(Object obj, StringBuilder builder, int depth) throws IllegalArgumentException, IllegalAccessException {
+	public int getNewLineCharacters() {
+		if(!setWhiteSpaces)
+			return 0;
+	
+		if(useTabs) {
+			return 1 + depth;
+		} else {
+			return 1 + depth * indentation;
+		}
+	}
+
+	private static String parseToJSON(Object obj, JSONParser parser) {
+		StringBuilder builder = new StringBuilder();
+		
+		if(obj == null || obj.getClass().isArray() 
+				|| obj instanceof String || obj instanceof Character)
+			return null;
+		
+		try {
+			parser.parseObjectToJSON(obj, builder);
+		} catch (IllegalArgumentException | IllegalAccessException | ClassCastException e) {
+			return null;
+		}
+		
+		return builder.toString();
+	}
+
+	private void parseObjectToJSON(Object obj, StringBuilder builder) throws IllegalArgumentException, IllegalAccessException {
 		builder.append('{');
 		depth++;
-		newLine(builder, depth);
+		newLine(builder);
 		
 		Field[] fields = obj.getClass().getFields(); 
 		for(int i = 0; i < fields.length; ++i) {
@@ -69,27 +140,27 @@ public class JSONParser {
 			builder.append(fields[i].getName());
 			builder.append("\" : ");
 			
-			parseValueToJSON(fields[i].get(obj), builder, depth);
+			parseValueToJSON(fields[i].get(obj), builder);
 			
 			if(i+1 < fields.length) {
 				builder.append(", ");
-				newLine(builder, depth);
+				newLine(builder);
 			}
 		}
 		
 		depth--;
-		newLine(builder, depth);
+		newLine(builder);
 		builder.append('}');
 	}
 	
 
-	private static void parseValueToJSON(Object obj, StringBuilder builder, int depth) throws IllegalArgumentException, IllegalAccessException {
+	private void parseValueToJSON(Object obj, StringBuilder builder) throws IllegalArgumentException, IllegalAccessException {
 		if(obj == null) {
 			builder.append("null");
 			return;
 		}
 		if(obj.getClass().isArray()) {
-			parseArrayToJSON(obj, builder, depth);
+			parseArrayToJSON(obj, builder);
 			return;
 		}
 		if(isNumber(obj)) {
@@ -112,7 +183,7 @@ public class JSONParser {
 			builder.append('"').append((obj).toString()).append('"');
 			return;
 		}
-		parseObjectToJSON(obj, builder, depth);
+		parseObjectToJSON(obj, builder);
 	}
 	
 	private static boolean isNumber(Object obj) {
@@ -122,23 +193,23 @@ public class JSONParser {
 				obj instanceof Long;
 	}
 	
-	private static void parseArrayToJSON(Object obj, StringBuilder builder, int depth) throws IllegalArgumentException, IllegalAccessException {
+	private void parseArrayToJSON(Object obj, StringBuilder builder) throws IllegalArgumentException, IllegalAccessException {
 		builder.append('[');
 		depth++;
-		newLine(builder, depth);
+		newLine(builder);
 		
 		Object[] values = (Object[]) obj; 
 		for(int i = 0; i < values.length; ++i) {
-			parseValueToJSON(values[i], builder, depth);
+			parseValueToJSON(values[i], builder);
 			
 			if(i+1 < values.length) {
 				builder.append(", ");
-				newLine(builder, depth);
+				newLine(builder);
 			}
 		}
 		
 		depth--;
-		newLine(builder, depth);
+		newLine(builder);
 		builder.append(']');
 	}
 	

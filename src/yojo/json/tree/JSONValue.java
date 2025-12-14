@@ -1,5 +1,6 @@
 package yojo.json.tree;
 
+import yojo.json.JSONParser;
 import yojo.json.token.TypeParsingException;
 
 public interface JSONValue {
@@ -8,7 +9,10 @@ public interface JSONValue {
 	
 	public JSONValueType getType();
 	public String parseToJSON();
-	public void parseToJSON(StringBuilder builder, int depth);
+	public String parseToJSON(boolean setWhiteSpaces);
+	public String parseToJSON(boolean setWhiteSpaces, boolean useTabs);
+	public String parseToJSON(boolean setWhiteSpaces, boolean useTabs, int indentation);
+	public void parseToJSON(StringBuilder builder, JSONParser whiteData);
 	public <A> A parseFromJSON(Class<A> c) throws TreeParserException, TypeParsingException;
 	
 	public static enum JSONValueType{
@@ -35,7 +39,22 @@ public interface JSONValue {
 		}
 
 		@Override
-		public void parseToJSON(StringBuilder builder, int depth) {
+		public String parseToJSON(boolean setWhiteSpaces) {
+			return parseToJSON();
+		}
+
+		@Override
+		public String parseToJSON(boolean setWhiteSpaces, boolean useTabs) {
+			return parseToJSON();
+		}
+
+		@Override
+		public String parseToJSON(boolean setWhiteSpaces, boolean useTabs, int indentation) {
+			return parseToJSON();
+		}
+		
+		@Override
+		public void parseToJSON(StringBuilder builder, JSONParser whiteData) {
 			builder.append("null");
 		}
 
@@ -43,7 +62,7 @@ public interface JSONValue {
 		public <A> A parseFromJSON(Class<A> c) {
 			return null;
 		}
-		
+
 	}
 
 }
